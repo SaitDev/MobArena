@@ -42,8 +42,13 @@ Using a control room
 ====================
 
 A "control room" setup works best for this. A control room is an
-administrator-only room underneath the lobby. The room holds the class chests,
-which lets administrators warp there and change the contents of the chests.
+administrator-only room that holds the class chests. Administrators warp there
+to change the contents of the chests.
+
+There's different ways to implement a control room. A common way is to build the
+control room underneath the lobby. To later modify the control room, you must
+enter Setup Mode (explained in :doc:`arena-setup`). If you want to use a control
+room outside of the arena, look into `Linked class chests`_.
 
 .. figure:: ../img/class-chests-1.png
    :alt: Lobby is above an example control room
