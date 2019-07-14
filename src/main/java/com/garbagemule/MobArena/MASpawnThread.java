@@ -19,12 +19,15 @@ import com.garbagemule.MobArena.waves.types.UpgradeWave;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +40,8 @@ public class MASpawnThread implements Runnable
     private WaveManager waveManager;
     private MonsterManager monsterManager;
     private CreatesHealthBar createsHealthBar;
+
+    private Integer mobFollowRange; // how far (blocks) will mob keep following player
 
     private int playerCount, monsterLimit;
     private boolean waveClear, bossClear, preBossClear, wavesAsLevel;
@@ -59,6 +64,13 @@ public class MASpawnThread implements Runnable
         this.waveManager = arena.getWaveManager();
         this.monsterManager = arena.getMonsterManager();
         this.createsHealthBar = new CreatesHealthBar(arena.getSettings().getString("boss-health-bar", "none"));
+
+        if (arena.getSettings().contains("mob-follow-range")) {
+            int follow = mobFollowRange = arena.getSettings().getInt("mob-follow-range");
+            if (follow > 0) {
+                this.mobFollowRange = follow;
+            }
+        }
 
         reset();
     }
@@ -222,6 +234,15 @@ public class MASpawnThread implements Runnable
 
                 // Add potion effects
                 e.addPotionEffects(w.getEffects());
+
+                // Change following range
+                if (mobFollowRange != null) {
+                    e.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(mobFollowRange);
+                    // set the mob target someone is alive in arena
+                    List<Player> playersInArena = new ArrayList<>(arena.getPlayersInArena());
+                    Collections.shuffle(playersInArena);
+                    ((Mob)e).setTarget(playersInArena.get(0));
+                }
 
                 // Add it to the arena.
                 monsterManager.addMonster(e);

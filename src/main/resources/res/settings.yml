@@ -44,3 +44,4 @@ isolated-chat: false
 global-join-announce: false
 global-end-announce: false
 show-death-messages: true
+mob-follow-range: 0
